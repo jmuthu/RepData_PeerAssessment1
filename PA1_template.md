@@ -130,7 +130,7 @@ print(xtab, type="html")
 ```
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Sun Oct 19 09:26:36 2014 -->
+<!-- Sun Oct 19 09:52:23 2014 -->
 <table border=1>
 <tr> <th>  </th> <th> Complete cases sum per day </th> <th> Imputted sum per day </th>  </tr>
   <tr> <td align="right"> 2012-10-01 </td> <td align="right">  </td> <td align="right"> 10766.19 </td> </tr>

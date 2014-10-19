@@ -41,8 +41,6 @@ sum_per_day <- tapply(complete_activity$steps, complete_activity$date,sum)
 complete_sum <- sum_per_day[complete.cases(sum_per_day)]
 mean_day <- mean(complete_sum)
 median_day <- median(complete_sum)
-hist(complete_sum, main="Frequency of total steps taken per day", 
-     xlab = "Number of steps taken per day")
 ```
 
 The frequency of the total number of steps taken per day is shown in the 
@@ -53,8 +51,8 @@ hist(complete_sum, main="Frequency of total steps taken per day",
      xlab = "Number of steps taken per day")
 ```
 
-Mean and Median of the total number of steps taken per day are `r mean_day`
-and `r median_day` respectively
+Mean and Median of the total number of steps taken per day are `r as.character(mean_day)`
+and `r as.character(median_day)` respectively
 
 ## What is the average daily activity pattern?
 
@@ -69,15 +67,16 @@ Time series plot for daily average for each interval is shown below
 
 ``` {r average daily activity plot}
 plot(x = labels(avg_daily)[[1]], y = as.numeric(avg_daily),
-     xlab="Time interval (minute)", 
+     xlab="Time interval (minute)", ylab="Steps",
      main="Average number of steps taken for all days", type="l")
 ```
 
-`r maximum_avg_index` interval contains the maximum average number of steps which is `r as.numeric(avg_daily[maximum_avg_index])   `
+`r maximum_avg_index` interval contains the maximum average number of steps of `r as.numeric(avg_daily[maximum_avg_index])   `
 
 ## Imputing missing values
 
-Imputing the missing values with the mean of the 5 minute interval 
+Imputing the missing values with the mean of the 5 minute interval and compute the mean and median of the total number of steps taken each day
+
 ``` {r average missing values}
 sum_na <- sum(is.na(activity))
 filled_activity <- activity
@@ -90,7 +89,7 @@ for (i in seq_len(nrow(filled_activity))) {
 filled_sum_per_day <- tapply(filled_activity$steps, filled_activity$date,sum)
 filled_mean_day <- mean(filled_sum_per_day)
 filled_median_day <- median(filled_sum_per_day)
-merged_sum = cbind(sum_per_day,filled_sum_per_day)
+merged_sum <- cbind(sum_per_day,filled_sum_per_day)
 colnames(merged_sum) <- c("Complete cases sum per day", "Imputted sum per day")
 
 ```
@@ -104,9 +103,9 @@ hist(filled_sum_per_day, main="Frequency of total steps taken per day",
 
 ```
 
-Mean and Median of the total number of steps taken per day are `r filled_mean_day`
-and `r filled_median_day` respectively. Imputting the missing values has no 
-difference on the mean because the missing data was filled with means but the 
+Mean and Median of the total number of steps taken per day are `r as.character(filled_mean_day)`
+and `r as.character(filled_median_day)` respectively. Imputting the missing values has no 
+difference on the mean computed previously (in the first question) because the missing data was filled with means but the 
 median had a small difference. 
 
 The total daily step between the complete case and imputted case is tabulated 
@@ -119,7 +118,7 @@ print(xtab, type="html")
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
-
+Firstly, a new column is added to the dataset to store the date type (ie) whether the date falls on a weekday or weekend. Then the average steps for each date type and interval is computed.
 
 ``` {r activity in weekdays and weekends}
 library(reshape2)
@@ -132,12 +131,15 @@ filled_activity[,"DayType"] <- sapply(weekdays(filled_activity[,"date"]),
                                       )
 filled_activity_avg <- dcast(filled_activity, DayType~interval, value.var="steps", mean)
 melt_filled_activity_avg <- melt(filled_activity_avg, id="DayType", variable.name="Interval")
+melt_filled_activity_avg[ ,"Interval"] <- as.numeric(as.character(melt_filled_activity_avg[,"Interval"]))
 ```
 
-```{r activity day type plot}
+Below is the panel plot that shows the average steps taken during the weekday and weekend. In the plot we can see, the average steps taken is overall higher in the weekend.
 
+```{r activity day type plot}
 library(lattice)
 xyplot(value~Interval | DayType, data = melt_filled_activity_avg, 
-       type="l", layout = c(1,2), ylab="Number of Steps",scales=list(x=list(0,500,1000,1500,2000,2500)))
+       layout = c(1,2), ylab="Number of Steps", type="l", main="Average steps taken per 5 minute interval")
+       
 
 ```
